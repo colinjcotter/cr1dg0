@@ -55,5 +55,15 @@ BDMsolver.solve()
 u, p = wCR.split()
 u1, p1 = wBDM.split()
 
-File('CRtest.pvd').write(u, p, u1, p1)
+u_proj = Function(V1)
+ut = TrialFunction(V1)
+v = TestFunction(V1)
+
+a = inner(v('+'), ut('+'))*dS
+L = inner(v('+'), avg(u1))*dS
+projprob = LinearVariationalProblem(a, L, u_proj)
+projsolver = LinearVariationalSolver(projprob)
+projsolver.solve()
+
+File('CRtest.pvd').write(u, p, u1, p1, u_proj)
 
