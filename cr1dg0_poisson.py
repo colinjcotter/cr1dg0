@@ -59,8 +59,8 @@ u_proj = Function(V1)
 ut = TrialFunction(V1)
 v = TestFunction(V1)
 n = FacetNormal(mesh)
-a = (inner(v('+'), n('+')), inner(ut('+'), n('+')))*dS
-L = (inner(v('+'), n('+')), inner(avg(u1), n('+')))*dS
+a = inner(v('+'), n('+'))*inner(ut('+'), n('+'))*dS
+L = inner(v('+'), n('+'))*inner(avg(u1), n('+'))*dS
 projprob = LinearVariationalProblem(a, L, u_proj)
 projsolver = LinearVariationalSolver(projprob)
 projsolver.solve()
