@@ -2,11 +2,21 @@ from firedrake import *
 
 n = 100
 mesh = PeriodicUnitSquareMesh(n, n)
+Vc = mesh.coordinates.function_space()
+x, y = SpatialCoordinate(mesh)
+
+# (0, 1) -> (1/2, sqrt(3)/2)
+# (1, 0) -> (1, 0)
+
+f = Function(Vc).interpolate(as_vector([x + y/2, sqrt(3)/2*y]))
+mesh.coordinates.assign(f)
 
 V = VectorFunctionSpace(mesh, "CR", 1)
 Q = FunctionSpace(mesh, "DG", 0)
 
 x, y = SpatialCoordinate(mesh)
+
+
 
 p_exact = exp(sin(2*pi*x)*sin(2*pi*y))
 u_exact = as_vector([2*pi*cos(2*pi*x),2*pi*cos(2*pi*y)])*p_exact
@@ -33,7 +43,7 @@ v, q = TestFunctions(W1)
 u, p = TrialFunctions(W1)
 
 a = inner(u,v)*dx + p*div(v)*dx + q*div(u)*dx + q*p*dx
-L = (f+p_exact)*q*dx
+L = (div_u_exact+p_exact)*q*dx
 
 wBDM = Function(W1, name="BDM")
 BDMprob = LinearVariationalProblem(a, L, wBDM)
